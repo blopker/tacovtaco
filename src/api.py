@@ -19,10 +19,10 @@ def init():
     global photos_service, sheets_service
     if photos_service is not None:
         return
-    store = file.Storage('token.json')
+    store = file.Storage('storage/token.json')
     creds = store.get()
     if not creds or creds.invalid:
-        flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
+        flow = client.flow_from_clientsecrets('storage/credentials.json', SCOPES)
         creds = tools.run_flow(flow, store)
     sheets_service = build('sheets', 'v4', http=creds.authorize(Http()))
     photos_service = build('photoslibrary', 'v1', http=creds.authorize(Http()))

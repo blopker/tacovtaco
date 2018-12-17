@@ -16,8 +16,7 @@ class IndexResource:
 class VoteResource:
     def on_post(self, req, resp):
         data = json.loads(req.bounded_stream.read())
-        photo_id = data['id']
-        api.add_winner(photo_id)
+        api.add_vote(data['winner'], data['loser'])
 
 
 app = falcon.API()

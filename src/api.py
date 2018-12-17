@@ -42,36 +42,3 @@ def add_winner(photo_id):
     sheet.values().append(
         spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME,
         valueInputOption='RAW', body=values).execute()
-
-
-# def main():
-#     """Shows basic usage of the Sheets API.
-#     Prints values from a sample spreadsheet.
-#     """
-#     # The file token.json stores the user's access and refresh tokens, and is
-#     # created automatically when the authorization flow completes for the first
-#     # time.
-#     store = file.Storage('token.json')
-#     creds = store.get()
-#     if not creds or creds.invalid:
-#         flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
-#         creds = tools.run_flow(flow, store)
-#     service = build('sheets', 'v4', http=creds.authorize(Http()))
-#     photos_service = build('photoslibrary', 'v1', http=creds.authorize(Http()))
-#     results = photos_service.mediaItems().search(
-#         body={'albumId': ALBUM_ID}).execute()
-#     print(results)
-
-#     # Call the Sheets API
-#     sheet = service.spreadsheets()
-#     values = {'values': [['taco', 'is', 'best']]}
-#     result = sheet.values().append(
-#         spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME,
-#         valueInputOption='RAW', body=values).execute()
-#     values = result.get('values', [])
-
-#     # print(values)
-
-# if __name__ == '__main__':
-#     main()
-

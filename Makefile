@@ -1,5 +1,5 @@
 run:
-	gunicorn app:app
+	pipenv run gunicorn app:app --reload
 
 deploy:
 	@git push dokku master

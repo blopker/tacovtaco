@@ -1,2 +1,39 @@
-<a href="/vote/?id={{photoA.id}}"><img src="{{photoA.baseUrl}}"></a>
-<a href="/vote/?id={{photoB.id}}"><img src="{{photoB.baseUrl}}"></a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Taco v Taco</title>
+</head>
+<body>
+    <script>
+        function vote(id){
+            postData(`/vote`, {id})
+            .then(data => console.log(JSON.stringify(data)))
+            .catch(error => console.error(error));
+        }
+
+        function postData(url = ``, data = {}) {
+            return fetch(url, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+                redirect: 'follow',
+                referrer: 'no-referrer',
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json());
+        }
+    </script>
+    <a class="vote-button" onclick="vote('{{photoA.id}}')"><img src="{{photoA.baseUrl}}"></a>
+    <a class="vote-button" onclick="vote('{{photoB.id}}')"><img src="{{photoB.baseUrl}}"></a>
+
+
+</body>
+</html>
+

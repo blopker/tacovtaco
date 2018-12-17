@@ -1,6 +1,7 @@
 import falcon
 from falcon_jinja2 import FalconTemplate
 from src import api
+import json
 
 falcon_template = FalconTemplate()
 
@@ -13,10 +14,10 @@ class IndexResource:
 
 
 class VoteResource:
-    def on_get(self, req, resp):
-        photo_id = req.params['id']
+    def on_post(self, req, resp):
+        data = json.loads(req.bounded_stream.read())
+        photo_id = data['id']
         api.add_winner(photo_id)
-        raise falcon.HTTPTemporaryRedirect('/')
 
 
 app = falcon.API()

@@ -15,7 +15,9 @@
         }
     </style>
     <script>
-        var voted = false;
+        let photoCache = []
+        getPhotos()
+        let voted = false;
         function vote(winnerDOMID, loserDOMID){
             if (voted) {
                 return
@@ -25,21 +27,45 @@
             let loser = document.getElementById(loserDOMID)
             let winnerID = winner.dataset.photoId
             let loserID = loser.dataset.photoId
+            winner.src = '';
+            loser.src = '';
 
-            getData(`/photos`)
-            .then(resp => {
-                return resp.json()
-            })
-            .then(data => {
-                winner.dataset.photoId = data.photoA.id;
-                winner.src = data.photoA.baseUrl;
-                loser.dataset.photoId = data.photoB.id;
-                loser.src = data.photoB.baseUrl;
+            getPhotos(()=>{
+                let photoA = photoCache.pop();
+                let photoB = photoCache.pop();
+                winner.dataset.photoId = photoA.id;
+                winner.src = photoA.baseUrl;
+                loser.dataset.photoId = photoB.id;
+                loser.src = photoB.baseUrl;
                 voted = false;
             })
 
             postData(`/vote`, {winner: winnerID, loser: loserID})
             .catch(error => console.error(error));
+        }
+
+        function getPhotos(cb) {
+            let called = false;
+            if (photoCache.length > 1 && cb) {
+                called = true;
+                cb()
+            }
+            getData(`/photos`)
+            .then(resp => {
+                return resp.json()
+            })
+            .then(data => {
+                let image1 = new Image();
+                image1.src = data.photoA.baseUrl;
+                let image2 = new Image();
+                image2.src = data.photoB.baseUrl;
+                photoCache.push(data.photoA)
+                photoCache.push(data.photoB)
+                if (!called && cb){
+                    cb()
+                    getPhotos()
+                }
+            })
         }
 
         function postData(url = ``, data = {}) {

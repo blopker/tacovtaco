@@ -19,7 +19,14 @@ class VoteResource:
         api.add_vote(data['winner'], data['loser'])
 
 
+class PhotoResource:
+    def on_get(self, req, resp):
+        photos = api.get_photos()
+        resp.body = json.dumps({'photoA': photos[0], 'photoB': photos[1]})
+
+
 app = falcon.API()
 app.add_route('/', IndexResource())
 app.add_route('/vote', VoteResource())
+app.add_route('/photos', PhotoResource())
 api.init()

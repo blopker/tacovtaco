@@ -16,13 +16,29 @@
     </style>
     <script>
         var voted = false;
-        function vote(winner, loser){
+        function vote(winnerDOMID, loserDOMID){
             if (voted) {
                 return
             }
             voted = true
-            postData(`/vote`, {winner, loser})
-            .then(data => window.location.reload())
+            let winner = document.getElementById(winnerDOMID)
+            let loser = document.getElementById(loserDOMID)
+            let winnerID = winner.dataset.photoId
+            let loserID = loser.dataset.photoId
+
+            getData(`/photos`)
+            .then(resp => {
+                return resp.json()
+            })
+            .then(data => {
+                winner.dataset.photoId = data.photoA.id;
+                winner.src = data.photoA.baseUrl;
+                loser.dataset.photoId = data.photoB.id;
+                loser.src = data.photoB.baseUrl;
+                voted = false;
+            })
+
+            postData(`/vote`, {winner: winnerID, loser: loserID})
             .catch(error => console.error(error));
         }
 
@@ -40,6 +56,20 @@
                 body: JSON.stringify(data),
             });
         }
+
+        function getData(url = ``, data = {}) {
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+                redirect: 'follow',
+                referrer: 'no-referrer'
+            });
+        }
     </script>
     <div class="container">
         <h1 class="">Taco v Taco</h1>
@@ -47,15 +77,12 @@
         <p>Which Taco is cutest? Click to vote!</p>
         <div class="row">
             <div class="column col-6">
-                <a class="vote-button" onclick="vote('{{photoA.id}}', '{{photoB.id}}')"><img src="{{photoA.baseUrl}}"></a>
+                <a class="vote-button" onclick="vote('photo-a', 'photo-b')"><img data-photo-id="{{photoA.id}}" id="photo-a" src="{{photoA.baseUrl}}"></a>
             </div>
             <div class="column col-6">
-                <a class="vote-button" onclick="vote('{{photoB.id}}', '{{photoA.id}}')"><img src="{{photoB.baseUrl}}"></a>
+                <a class="vote-button" onclick="vote('photo-b', 'photo-a')"><img data-photo-id="{{photoB.id}}" id="photo-b" src="{{photoB.baseUrl}}"></a>
             </div>
         </div>
-    </div>
-    <div class="main">
-
     </div>
 </body>
 </html>
